@@ -13,12 +13,6 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version:
-        - 14.x
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
     - name: Set Version
       id: version
@@ -27,14 +21,15 @@ jobs:
         VERSION=$(echo ${{ github.ref }} | sed -e "s#refs/tags/##g")
         echo ::set-output name=version::$VERSION
         echo ::set-output name=filename::$REPOSITORY-$VERSION
+        echo ::set-output name=nodeversion::14.x
         echo "Repository $REPOSITORY"
         echo "Version $VERSION"
 
     - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js ${{ steps.version.outputs.nodeversion }}
       uses: actions/setup-node@v2
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: ${{ steps.version.outputs.nodeversion }}
         cache: 'npm'
     - run: |
         pwd
